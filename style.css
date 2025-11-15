@@ -1,4 +1,4 @@
-/* style.css - 최종 통합 버전 (추천 레이아웃 강력 수정) */
+/* style.css - 최종 통합 버전 (퍼스널 톤 추천 스타일 추가) */
 
 /* 변수 설정 */
 :root {
@@ -207,21 +207,21 @@ h2 .fas {
     transform: scale(1.05);
 }
 
-/* 💡 새로운 얼굴형 선택 버튼 그룹 스타일 */
+/* 💡 얼굴형 선택 버튼 그룹 스타일 */
 #style-selection-controls {
     text-align: center;
     padding: 15px;
     border: 1px solid #ddd;
     border-radius: 10px;
     background-color: var(--bg-light);
-    margin-top: 30px; /* 추가 */
+    margin-top: 30px; 
 }
 #style-selection-controls h3 {
     margin-bottom: 10px;
     font-size: 1.2em;
     color: #007bff; 
 }
-
+/* 얼굴형 버튼 스타일 (재사용) */
 .face-type-buttons {
     display: flex;
     flex-wrap: wrap;
@@ -244,6 +244,42 @@ h2 .fas {
 .face-select-btn.active {
     background: linear-gradient(45deg, #007bff, #0056b3); 
     box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+}
+
+/* 💡 퍼스널 톤 선택 버튼 그룹 스타일 (새로 추가) */
+#tone-selection-controls {
+    text-align: center;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: var(--bg-light);
+    margin-top: 30px; 
+}
+#tone-selection-controls h3 {
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    color: #fc5c7d; /* 톤 가이드 강조 색상 */
+}
+
+.tone-type-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+.tone-select-btn {
+    /* face-select-btn과 스타일 공유 */
+    background-color: #6c757d; 
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: 700;
+    font-size: 1em;
+    transition: background-color 0.2s, transform 0.2s;
+}
+.tone-select-btn.active {
+    background: linear-gradient(45deg, #fc5c7d, #6a82fb); /* 톤 가이드 활성화 색상 */
+    box-shadow: 0 4px 8px rgba(252, 92, 125, 0.4);
 }
 
 
@@ -282,13 +318,13 @@ h2 .fas {
 }
 
 
-/* 💡 추천 결과 (텍스트 + 이미지) 레이아웃 */
+/* 💡 공통 추천 결과 (텍스트 + 이미지) 레이아웃 */
 #recommendation-output {
     text-align: left;
     padding: 15px;
     border: 1px dashed #ccc;
     border-radius: 10px;
-    margin-top: 20px; /* 추가 */
+    margin-top: 20px; 
 }
 
 .recommendation-content {
@@ -312,6 +348,10 @@ h2 .fas {
     color: #555;
 }
 
+
+/* ---------------------------------------------------- */
+/* 🌟 1. 얼굴형 추천 스타일 (Hair Style Guide) */
+/* ---------------------------------------------------- */
 .hair-styles-container {
     display: flex;
     gap: 20px;
@@ -319,7 +359,6 @@ h2 .fas {
     margin-top: 15px;
 }
 
-/* 🌟 추천 칼럼 (텍스트+이미지 컨테이너) */
 .style-column {
     flex: 1 1 calc(50% - 10px);
     min-width: 250px;
@@ -328,61 +367,126 @@ h2 .fas {
     border-radius: 6px;
     background-color: white;
     
-    /* 🌟 핵심 수정: 텍스트(h5)와 이미지(img)를 가로로 배치 */
     display: flex; 
-    flex-direction: row; /* 가로 배치 */
-    gap: 15px; 
-    align-items: flex-start; /* 상단 정렬 */
+    flex-direction: row; 
+    gap: 10px; 
+    align-items: center; 
 }
 
-/* 🌟 텍스트 영역 */
 .style-column h5 {
     color: #4CAF50; 
     margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 1.1em;
-    flex: 1; /* 남은 공간을 모두 차지 */
-    line-height: 1.5;
+    margin-bottom: 0;
+    font-size: 1.0em; 
+    flex: 1; 
+    line-height: 1.4;
 }
 
-/* 🌟 이미지 영역 (크기 축소 및 고정) */
 .style-column img {
-    /* 🌟 핵심 수정: 이미지 크기 고정 및 비율 유지 */
-    width: 150px; /* 고정 너비 */
-    height: 150px; /* 고정 높이 */
-    object-fit: cover; /* 이미지가 잘리더라도 영역을 꽉 채움 */
+    /* 🌟 얼굴형 이미지 크기 강제 고정 */
+    width: 120px !important; 
+    height: 120px !important; 
+    max-width: 120px !important;
+    object-fit: cover; 
     border-radius: 4px;
-    margin-top: 0; 
     border: 1px solid #ddd;
-    flex-shrink: 0; /* 이미지 크기가 줄어들지 않도록 */
+    flex-shrink: 0; 
+}
+
+
+/* ---------------------------------------------------- */
+/* 🌟 2. 퍼스널 톤 추천 스타일 (Personal Tone Guide) - 새로 추가 */
+/* ---------------------------------------------------- */
+.tone-styles-container {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start; 
+    margin-top: 15px;
+}
+
+/* 이미지 영역 (150px 원형) */
+.tone-image-column {
+    flex: 0 0 150px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tone-image-column img {
+    width: 150px !important; 
+    height: 150px !important; 
+    max-width: 150px !important;
+    object-fit: cover; 
+    border-radius: 50%; /* 원형 이미지 */
+    border: 3px solid #FFC0CB;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0; 
+}
+
+/* 텍스트 영역 */
+.tone-text-column {
+    flex: 1; 
+    text-align: left;
+}
+
+.tone-category {
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #eee;
+}
+
+.tone-category h5 {
+    font-size: 1.1em;
+    color: #4CAF50; 
+    margin: 0 0 5px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tone-category p {
+    margin: 0;
+    font-size: 0.95em;
+    color: #555;
 }
 
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
-    .header-content-wrapper {
-        flex-direction: column;
-        gap: 15px;
-    }
-    .card {
-        padding: 25px;
-    }
-    .hair-styles-container {
-        flex-direction: column;
-    }
-    /* 🌟 작은 화면에서는 추천 텍스트/이미지를 다시 세로로 배치 */
+    /* 얼굴형 추천 반응형 유지 */
     .style-column {
         flex-direction: column; 
         align-items: center;
     }
-    .style-column h5, .style-column img {
-        flex: auto; /* 세로 배치 시 유연하게 */
-        width: 100%;
-        max-width: 300px; /* 세로 배치 시 최대 너비 지정 */
-        height: auto; /* 세로 배치 시 높이 자동 */
+    .style-column h5 {
         text-align: center;
     }
-    .face-type-buttons {
-        gap: 5px;
+    .style-column img {
+        width: 80% !important; 
+        height: auto !important; 
+        max-width: 250px !important;
+    }
+
+    /* 톤 추천 반응형 수정 */
+    .tone-styles-container {
+        flex-direction: column; 
+        align-items: center;
+    }
+    .tone-image-column {
+        margin-bottom: 15px;
+    }
+    .tone-image-column img {
+        width: 120px !important; 
+        height: 120px !important; 
+        max-width: 120px !important;
+    }
+    .tone-text-column {
+        width: 100%;
+    }
+    .tone-category {
+        text-align: left; /* 작은 화면에서도 텍스트는 좌측 정렬 유지 */
+    }
+    .tone-category h5 {
+        justify-content: flex-start;
     }
 }
