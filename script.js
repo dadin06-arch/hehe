@@ -1,4 +1,4 @@
-// script.js - AI StyleMate Logic (Final Version with Manual Recommendation)
+// script.js - AI StyleMate Logic (Final Version with Personal Tone Recommendation)
 
 // ----------------------------------------------------
 // 1. MODEL PATHS & RECOMMENDATION DATA (경로 및 데이터 정의)
@@ -14,7 +14,7 @@ let isRunning = false;
 let isInitialized = false; 
 let currentSource = 'webcam'; 
 
-// 💡 요청하신 얼굴형별 추천 데이터 및 이미지 URL 정의
+// 💡 얼굴형별 추천 데이터 및 이미지 URL 정의
 const faceTypeData = {
     "Oval": {
         summary: "The most versatile face shape. Naturally suits most hairstyles.",
@@ -53,6 +53,24 @@ const faceTypeData = {
     }
 };
 
+// 💡 퍼스널 톤 추천 데이터 및 이미지 URL 정의 (파일명 최종 수정됨)
+const personalToneData = {
+    "Cool": {
+        summary: "Blue-based and purple-based cool hues make the skin look clearer and brighter.",
+        hair: "Ash brown, ash blonde, blue-black",
+        clothing: "Light tones: Ice blue, lavender, lilac pink | Dark tones: Navy, charcoal gray, burgundy | Neutrals: White, cool gray",
+        makeup: "Lips: Raspberry, fuchsia, cool pink | Eyes: Mauve, silver, cool brown | Blush: Rose pink, lilac pink",
+        image: 'images/cool_tone.png' // <-- 최종 파일명
+    },
+    "Warm": {
+        summary: "Yellow-based and orange-based warm hues enhance natural warmth and give a healthy glow.",
+        hair: "Golden brown, copper brown",
+        clothing: "Light tones: Coral, peach, salmon | Dark tones: Olive, khaki, mustard | Neutrals: Beige, ivory, cream",
+        makeup: "Lips: Coral, orange-red, brick | Eyes: Gold, bronze, warm brown | Blush: Peach, coral, apricot",
+        image: 'images/warm_tone.png' // <-- 최종 파일명
+    }
+};
+
 
 // ===============================================
 // 2. Event Listeners and Setup
@@ -73,28 +91,38 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("image-upload").addEventListener("change", handleImageUpload);
     document.getElementById("process-image-btn").addEventListener("click", processUploadedImage);
     
-    // 💡 얼굴형 선택 버튼 이벤트 리스너 추가 (추천 기능)
+    // 💡 얼굴형 선택 버튼 이벤트 리스너 추가
     document.querySelectorAll('.face-select-btn').forEach(button => {
         button.addEventListener('click', (e) => {
-            // 모든 버튼에서 active 클래스 제거
             document.querySelectorAll('.face-select-btn').forEach(btn => btn.classList.remove('active'));
-            // 클릭된 버튼에 active 클래스 추가
+            document.querySelectorAll('.tone-select-btn').forEach(btn => btn.classList.remove('active')); 
             e.target.classList.add('active');
-
             const faceType = e.target.getAttribute('data-facetype');
-            showRecommendation(faceType);
+            showRecommendation(faceType); 
+        });
+    });
+
+    // 💡 퍼스널 톤 선택 버튼 이벤트 리스너 추가 
+    document.querySelectorAll('.tone-select-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            document.querySelectorAll('.face-select-btn').forEach(btn => btn.classList.remove('active')); 
+            document.querySelectorAll('.tone-select-btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            const toneType = e.target.getAttribute('data-tonetype');
+            showToneRecommendation(toneType); 
         });
     });
     
     switchMode('webcam');
     
-    // 초기에는 추천 섹션을 숨김 (handleModelChange에서 Model 1 선택 시 보이게 됨)
+    // 초기에는 두 추천 섹션 모두 숨김
     document.getElementById("style-selection-controls").style.display = 'none';
+    document.getElementById("tone-selection-controls").style.display = 'none';
 });
 
 
 // ===============================================
-// 3. Mode Switching Logic
+// 3. Mode Switching Logic 
 // ===============================================
 
 function switchMode(mode) {
@@ -137,7 +165,7 @@ function switchMode(mode) {
     }
     
     labelContainer.innerHTML = (mode === 'webcam' && isRunning) ? 'Running analysis...' : 'Waiting for analysis...';
-    document.getElementById("recommendation-output").innerHTML = '<p>Select a Face Type button from the **Hair Style Guide** to see recommendations.</p>';
+    document.getElementById("recommendation-output").innerHTML = '<p>Select a model to begin the analysis or selection.</p>';
 }
 
 
@@ -196,7 +224,7 @@ async function toggleAnalysis() {
 
 
 // ===============================================
-// 5. Webcam Prediction Loop and Model Change Handler
+// 5. Webcam Prediction Loop and Model Change Handler 
 // ===============================================
 
 function loop() {
@@ -220,21 +248,27 @@ function handleModelChange(newModel) {
     currentModel = newModel;
     updateModelInfo();
     
-    // 💡 모델 전환 시 스타일 추천 섹션 표시/숨김 처리
+    // 모델 전환 시 스타일/톤 추천 섹션 표시/숨김 처리 
     const styleControls = document.getElementById("style-selection-controls");
+    const toneControls = document.getElementById("tone-selection-controls"); 
     const recommendationOutput = document.getElementById("recommendation-output");
     
-    // 얼굴형 분석 모델(Model 1)일 때만 추천 버튼 표시
+    // 얼굴형 분석 모델(Model 1)일 때
     if (newModel === 1) { 
         styleControls.style.display = 'block';
+        toneControls.style.display = 'none';
         recommendationOutput.innerHTML = '<p>Select a Face Type button from the **Hair Style Guide** to see recommendations.</p>';
         
         // 버튼 선택 초기화
-        document.querySelectorAll('.face-select-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tone-select-btn').forEach(btn => btn.classList.remove('active'));
         
-    } else { // 퍼스널 톤 분석 모델(Model 2)일 때 숨김
-        styleControls.style.display = 'none';
-        recommendationOutput.innerHTML = '<p>The Hair Style Guide is available only for Face Type Analysis (Model 1).</p>';
+    } else { // 퍼스널 톤 분석 모델(Model 2)일 때
+        styleControls.style.display = 'none'; 
+        toneControls.style.display = 'block'; 
+        recommendationOutput.innerHTML = '<p>Select a Personal Tone button from the **Personal Tone Guide** to see recommendations.</p>';
+
+        // 버튼 선택 초기화
+        document.querySelectorAll('.face-select-btn').forEach(btn => btn.classList.remove('active'));
     }
     
     // 일시 정지 상태일 때 즉시 예측 실행 (화면 갱신)
@@ -301,7 +335,7 @@ async function processUploadedImage() {
 
 
 // ===============================================
-// 7. Core Prediction and UI Update (예측 퍼센트 출력)
+// 7. Core Prediction and UI Update 
 // ===============================================
 
 async function predict(modelToUse, modelName, element) {
@@ -322,17 +356,20 @@ async function predict(modelToUse, modelName, element) {
     }
     labelContainer.innerHTML = resultHTML;
     
-    // 예측이 완료되면 얼굴형 버튼이 보이도록 보장 
+    // 예측이 완료되면 해당 모델의 추천 버튼이 보이도록 보장 
     if (currentModel === 1) {
         document.getElementById("style-selection-controls").style.display = 'block';
+    } else if (currentModel === 2) {
+        document.getElementById("tone-selection-controls").style.display = 'block';
     }
 }
 
 
 // ===============================================
-// 8. Manual Recommendation Output (헤어스타일 추천 출력)
+// 8. Manual Recommendation Output 
 // ===============================================
 
+// 얼굴형 추천 출력
 function showRecommendation(faceType) {
     const data = faceTypeData[faceType]; 
     const outputContainer = document.getElementById("recommendation-output");
@@ -342,7 +379,6 @@ function showRecommendation(faceType) {
         return;
     }
 
-    // 추천 스타일 텍스트 및 이미지 출력 (가로 배치 CSS 사용)
     const recommendationHTML = `
         <div class="recommendation-content">
             <h4>✨ Hairstyle Guide for ${faceType} Face Shape</h4>
@@ -358,6 +394,46 @@ function showRecommendation(faceType) {
                 <div class="style-column">
                     <h5><i class="fas fa-spa"></i> Long Hair: ${data.long}</h5>
                     <img src="${data.longImage}" alt="${faceType} Long Hairstyle">
+                </div>
+            </div>
+        </div>
+    `;
+    outputContainer.innerHTML = recommendationHTML; 
+}
+
+// 퍼스널 톤 추천 출력
+function showToneRecommendation(toneType) {
+    const data = personalToneData[toneType]; 
+    const outputContainer = document.getElementById("recommendation-output");
+    
+    if (!data) {
+        outputContainer.innerHTML = `<p style="color:red;">Error: No recommendation data found for ${toneType}.</p>`;
+        return;
+    }
+
+    const recommendationHTML = `
+        <div class="recommendation-content">
+            <h4>✨ Personal Color Guide for ${toneType} Tone</h4>
+            
+            <p class="summary-text">${data.summary}</p>
+            
+            <div class="tone-styles-container">
+                <div class="tone-text-column">
+                    <div class="tone-category">
+                        <h5><i class="fas fa-cut"></i> Hair Colors</h5>
+                        <p>${data.hair}</p>
+                    </div>
+                    <div class="tone-category">
+                        <h5><i class="fas fa-tshirt"></i> Clothing Colors</h5>
+                        <p>${data.clothing}</p>
+                    </div>
+                    <div class="tone-category">
+                        <h5><i class="fas fa-gem"></i> Makeup Colors</h5>
+                        <p>${data.makeup}</p>
+                    </div>
+                </div>
+                <div class="tone-image-column">
+                    <img src="${data.image}" alt="${toneType} Color Palette">
                 </div>
             </div>
         </div>
