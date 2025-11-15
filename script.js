@@ -2,7 +2,6 @@ let model, webcam, labelContainer, maxPredictions;
 let currentModel = null; // 현재 로드된 모델 (1: 얼굴형, 2: 톤)
 
 // 얼굴형별 추천 데이터 및 이미지 URL 정의
-// 🚨 'images/' 폴더에 모든 PNG 파일이 있다고 가정하고 <img> 태그를 직접 삽입합니다.
 const faceTypeData = {
     // ⚠️ 모델의 레이블 이름과 정확히 일치해야 합니다. (예: "Oval", "Round" 등)
     "Oval": {
@@ -58,17 +57,14 @@ async function init(modelPath, modelType) {
     const modelURL = URL + "model.json";
     const metadataURL = URL + "metadata.json";
 
-    // 현재 모델 상태 업데이트
     currentModel = modelType;
 
-    // cleanup previous webcam/image (이전 상태 초기화)
     if (webcam) {
         await webcam.stop();
         document.getElementById("webcam-container").innerHTML = '<p id="initial-message">Select a mode to begin.</p>';
         webcam = null;
     }
     
-    // 모델 로딩 시작
     document.getElementById("current-model-info").innerText = `Active Model: Loading ${modelType === 1 ? 'Face Type Analysis' : 'Personal Tone Analysis'}...`;
     
     try {
@@ -76,7 +72,14 @@ async function init(modelPath, modelType) {
         maxPredictions = model.getTotalClasses();
         document.getElementById("current-model-info").innerHTML = `Active Model: **${modelType === 1 ? 'Face Type Analysis' : 'Personal Tone Analysis'}** Loaded`;
         
-        // Load 성공 후 웹캠/업로드 모드에 따라 초기화
+        // 모델 로드 성공 시 버튼 스타일 업데이트
+        document.querySelectorAll('.model-select-btn').forEach(btn => btn.classList.remove('active'));
+        if (modelType === 1) {
+            document.getElementById('model1-btn').classList.add('active');
+        } else if (modelType === 2) {
+            document.getElementById('model2-btn').classList.add('active');
+        }
+        
         const modeWebcamBtn = document.getElementById('mode-webcam');
         if (modeWebcamBtn && modeWebcamBtn.classList.contains('active')) {
              setupWebcam();
@@ -84,13 +87,12 @@ async function init(modelPath, modelType) {
              document.getElementById("initial-message").innerText = "Image Upload Mode ready. Select an image.";
         }
         
-        // 이미지 업로드 버튼 활성화
         document.getElementById('process-image-btn').disabled = false;
 
 
     } catch (e) {
         console.error("Model loading failed:", e);
-        document.getElementById("current-model-info").innerText = "Active Model: Error loading model.";
+        document.getElementById("current-model-info").innerText = "Active Model: Error loading model. Check console for details.";
          document.getElementById('process-image-btn').disabled = true;
     }
 }
@@ -101,9 +103,9 @@ async function setupWebcam() {
         await webcam.stop();
     }
     const container = document.getElementById("webcam-container");
-    container.innerHTML = ''; // 기존 메시지 제거
+    container.innerHTML = ''; 
     
-    webcam = new tmImage.Webcam(400, 400, true); // width, height, flip
+    webcam = new tmImage.Webcam(400, 400, true); 
     await webcam.setup();
     await webcam.play();
     container.appendChild(webcam.canvas);
@@ -136,7 +138,7 @@ async function predict() {
     const prediction = await model.predict(inputElement, false);
     
     let labelContainer = document.getElementById("label-container");
-    labelContainer.innerHTML = ''; // 기존 내용 초기화
+    labelContainer.innerHTML = ''; 
 
     // 1. 가장 높은 확률의 예측 결과 찾기
     let maxPrediction = { className: "N/A", probability: 0 };
@@ -147,7 +149,7 @@ async function predict() {
         }
     }
 
-    // A. 예측 결과 목록 출력 (기존 스타일 유지)
+    // A. 예측 결과 목록 출력 
     for (let i = 0; i < prediction.length; i++) {
         const classPrediction =
             `<div class="prediction-item">${prediction[i].className}: <strong>${(prediction[i].probability * 100).toFixed(1)}%</strong></div>`;
@@ -157,7 +159,6 @@ async function predict() {
     // 2. 얼굴형 모델인 경우에만 추천 로직 실행 (currentModel === 1)
     if (currentModel === 1) {
         const highestFaceType = maxPrediction.className;
-        // faceTypeData에 없는 레이블이 나오면 defaultRecommendation 사용
         const data = faceTypeData[highestFaceType] || defaultRecommendation; 
 
         // 3. 추천 스타일 텍스트 및 이미지 출력
@@ -203,7 +204,6 @@ async function predict() {
 // 4. 모드 및 모델 전환 이벤트 리스너
 document.addEventListener('DOMContentLoaded', () => {
     
-    // DOM 요소 캐싱
     const modeWebcam = document.getElementById('mode-webcam');
     const modeUpload = document.getElementById('mode-upload');
     const webcamContainer = document.getElementById('webcam-container');
@@ -212,9 +212,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageUpload = document.getElementById('image-upload');
     const processImageBtn = document.getElementById('process-image-btn');
 
-    // Model Select Buttons
-    document.getElementById('model1-btn').addEventListener('click', () => init("FaceTypeModel/", 1));
-    document.getElementById('model2-btn').addEventListener('click', () => init("ToneModel/", 2));
+    // ⚠️ 모델 로드 경로를 'models/model_1/' 및 'models/model_2/'로 최종 수정
+    document.getElementById('model1-btn').addEventListener('click', () => init("models/model_1/", 1));
+    document.getElementById('model2-btn').addEventListener('click', () => init("models/model_2/", 2));
     
     // Start Analysis Button
     document.getElementById('start-button').addEventListener('click', predict);
