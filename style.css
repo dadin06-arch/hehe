@@ -1,30 +1,31 @@
-/* style.css - Hanyang University Layout + Modern Gradient Color & Icons */
+/* style.css - 최종 통합 버전 */
 
 /* 변수 설정 */
 :root {
-    --gradient-start: #FFC0CB;        /* 연한 핑크 */
-    --gradient-end: #ADD8E6;          /* 연한 스카이 블루 */
-    --main-text-color: #333333;       /* 메인 텍스트 색상 */
-    --h2-underline-color: linear-gradient(to right, #FFC0CB, #ADD8E6); /* H2 밑줄 그라데이션 */
-    --card-bg: #FFFFFF;               /* 카드 배경색 */
-    --bg-light: #F8F9FA;              /* 밝은 배경색 */
+    --gradient-start: #FFC0CB;        
+    --gradient-end: #ADD8E6;          
+    --main-text-color: #333333;       
+    --h2-underline-color: linear-gradient(to right, #FFC0CB, #ADD8E6); 
+    --card-bg: #FFFFFF;               
+    --bg-light: #F8F9FA;              
     --shadow-color: rgba(0, 0, 0, 0.1);
 
     --font-montserrat: 'Montserrat', sans-serif;
     --font-lato: 'Lato', sans-serif;
 
     /* 버튼 색상 */
-    --primary-button-bg: linear-gradient(to right, #6a82fb, #fc5c7d); /* Start 버튼 그라데이션 */
+    --primary-button-bg: linear-gradient(to right, #6a82fb, #fc5c7d); 
     --primary-button-hover-bg: linear-gradient(to right, #4c62e0, #e04461);
-    --secondary-button-bg: #5a5a5a; /* Pause 버튼 진한 회색 */
+    --secondary-button-bg: #5a5a5a; 
     --secondary-button-hover-bg: #4a4a4a;
 
-    --mode-button-border: #888888; /* Mode 버튼 테두리 */
-    --mode-button-active-bg: linear-gradient(to right, #6a82fb, #fc5c7d); /* Mode 버튼 활성 배경 */
+    --mode-button-border: #888888; 
+    --mode-button-active-bg: linear-gradient(to right, #6a82fb, #fc5c7d); 
     --mode-button-active-text: #FFFFFF;
 
-    --model-select-bg: #e0e0e0; /* Model Select 버튼 기본 배경 */
-    --model-select-active-bg: linear-gradient(45deg, #FFD700, #FFA500); /* Model Select 버튼 활성 배경 */
+    --model-select-bg: #e0e0e0; 
+    --model-select-active-bg: linear-gradient(45deg, #FFD700, #FFA500); 
+    --model-select-disabled-bg: #e0e0e0; 
 }
 
 body {
@@ -61,45 +62,27 @@ header {
     gap: 20px;
 }
 
-.header-text-group {
-    flex-grow: 1; 
-}
-
-.header-icons-left, .header-icons-right {
-    display: flex;
-    gap: 15px; 
-}
-
 .header-icon {
-    width: 80px; /* 아이콘 크기 확대 */
+    width: 80px; 
     height: 80px;
-    
-    /* PNG 원본 색상 유지를 위해 filter 제거 */
     filter: none; 
-    
     opacity: 1.0; 
     transition: transform 0.2s;
 }
 
-.header-icon:hover {
-    transform: scale(1.1);
-    filter: none;
-}
-
-
 h1 {
     font-family: var(--font-montserrat);
-    font-weight: 800; /* 폰트 두께 더 진하게 */
-    font-size: 3.8em; /* 제목 크기 대폭 확대 */
+    font-weight: 800; 
+    font-size: 3.8em; 
     margin-bottom: 5px;
-    letter-spacing: 2px; /* 글자 간격 넓혀 시원하게 */
+    letter-spacing: 2px; 
     color: var(--main-text-color); 
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); 
 }
 
 .subtitle {
     font-family: var(--font-lato);
-    font-size: 1.3em; /* 부제목 크기 확대 */
+    font-size: 1.3em; 
     opacity: 0.9; 
     max-width: 800px;
     margin: 0 auto;
@@ -146,10 +129,6 @@ h2 .fas {
     min-width: 320px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
-}
 
 /* 버튼 스타일 */
 .btn {
@@ -165,45 +144,10 @@ h2 .fas {
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
-
 .primary-btn { 
     background: var(--primary-button-bg); 
     color: var(--mode-button-active-text);
     box-shadow: 0 4px 10px rgba(106, 130, 251, 0.3);
-}
-.primary-btn:hover {
-    background: var(--primary-button-hover-bg);
-    transform: translateY(-3px) scale(1.02);
-}
-
-.secondary-btn { 
-    background-color: var(--secondary-button-bg);
-    color: var(--mode-button-active-text);
-    box-shadow: 0 4px 10px rgba(44, 62, 80, 0.3);
-}
-.secondary-btn:hover {
-    background-color: var(--secondary-button-hover-bg);
-    transform: translateY(-3px) scale(1.02);
-}
-
-
-.model-select-btn { 
-    background-color: var(--model-select-bg);
-    color: var(--main-text-color);
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.model-select-btn:hover {
-    background-color: #d0d0d0;
-    transform: translateY(-1px);
-}
-
-.model-select-btn.active {
-    background: var(--model-select-active-bg);
-    color: var(--main-text-color);
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-    transform: scale(1.05);
 }
 
 /* 듀얼 모드 버튼 스타일 */
@@ -212,7 +156,6 @@ h2 .fas {
     justify-content: center;
     margin-bottom: 20px;
 }
-
 .mode-btn {
     background-color: var(--card-bg);
     color: var(--main-text-color);
@@ -223,12 +166,64 @@ h2 .fas {
     transition: all 0.2s;
     font-weight: 400;
 }
-
 .mode-btn.active {
     background: var(--mode-button-active-bg);
     color: var(--mode-button-active-text);
     border-color: transparent;
     font-weight: 600;
+}
+
+/* 모델 선택 버튼 스타일 */
+.model-select-btn { 
+    background-color: var(--model-select-bg);
+    color: var(--main-text-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 10px 15px; 
+}
+.model-select-btn.active {
+    background: var(--model-select-active-bg);
+    color: var(--main-text-color);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+    transform: scale(1.05);
+}
+
+/* 💡 새로운 얼굴형 선택 버튼 그룹 스타일 */
+#style-selection-controls {
+    text-align: center;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: var(--bg-light);
+}
+#style-selection-controls h3 {
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    color: #007bff; 
+}
+
+.face-type-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+.face-select-btn {
+    background-color: #6c757d; 
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: 700;
+    flex: 1 1 100px; 
+    margin: 0;
+    font-size: 0.9em;
+    text-transform: capitalize;
+    transition: background-color 0.2s, transform 0.2s;
+}
+.face-select-btn.active {
+    background: linear-gradient(45deg, #007bff, #0056b3); 
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
 }
 
 
@@ -245,38 +240,87 @@ h2 .fas {
     margin: 0 auto;
 }
 
+/* 예측 결과 (퍼센트) 컨테이너 */
 #label-container {
-    margin-top: 25px;
-    text-align: left;
-    padding: 20px;
+    margin-top: 15px;
+    padding: 15px;
     border-radius: 10px;
     background-color: var(--bg-light);
     box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
-    font-family: var(--font-lato);
 }
 
 .prediction-item {
-    padding: 10px 0;
-    font-weight: 400;
+    padding: 8px 0;
     border-bottom: 1px solid #E0E0E0; 
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 1.05em;
+    font-size: 1em;
 }
 .prediction-item strong {
-    color: #6a82fb; 
+    color: #fc5c7d; 
 }
 
 
-/* 파일 업로드 입력창 스타일 */
-.file-input {
-    display: block;
-    margin: 20px auto 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
+/* 💡 추천 결과 (텍스트 + 이미지) 레이아웃 */
+#recommendation-output {
+    text-align: left;
+    padding: 15px;
+    border: 1px dashed #ccc;
+    border-radius: 10px;
+}
+
+.recommendation-content {
+    background-color: #f8f9fa; 
+    padding: 20px;
     border-radius: 8px;
-    background-color: #f9f9f9;
+}
+
+.recommendation-content h4 {
+    color: var(--primary-button-bg); 
+    font-size: 1.5em;
+    margin-top: 0;
+    border-bottom: 2px solid var(--gradient-start);
+    padding-bottom: 10px;
+}
+
+.summary-text {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+    font-style: italic;
+    color: #555;
+}
+
+.hair-styles-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.style-column {
+    flex: 1 1 calc(50% - 10px);
+    min-width: 250px;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: white;
+}
+
+.style-column h5 {
+    color: #4CAF50; 
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.style-column img {
+    width: 100%; 
+    max-height: 250px;
+    object-fit: cover; 
+    border-radius: 4px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
 }
 
 
@@ -286,42 +330,13 @@ h2 .fas {
         flex-direction: column;
         gap: 15px;
     }
-    .header-icons-left, .header-icons-right {
-        justify-content: center;
-        width: 100%;
-    }
-    .header-text-group {
-        order: 0;
-    }
-    h1 {
-        font-size: 2.5em;
-    }
-    .subtitle {
-        font-size: 1em;
-    }
-    h2 {
-        font-size: 1.5em;
-    }
     .card {
         padding: 25px;
     }
-    .btn {
-        padding: 12px 20px;
-        font-size: 0.9em;
+    .hair-styles-container {
+        flex-direction: column;
     }
-}
-@media (max-width: 480px) {
-    h1 {
-        font-size: 2em;
-    }
-    .subtitle {
-        font-size: 0.9em;
-    }
-    h2 {
-        font-size: 1.3em;
-    }
-    .btn {
-        width: 100%;
-        margin: 5px 0;
+    .face-type-buttons {
+        gap: 5px;
     }
 }
