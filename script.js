@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("image-upload").addEventListener("change", handleImageUpload);
     document.getElementById("process-image-btn").addEventListener("click", processUploadedImage);
     
-    // 💡 얼굴형 선택 버튼 이벤트 리스너 추가
+    // 💡 얼굴형 선택 버튼 이벤트 리스너 추가 (추천 기능)
     document.querySelectorAll('.face-select-btn').forEach(button => {
         button.addEventListener('click', (e) => {
             const faceType = e.target.getAttribute('data-facetype');
@@ -96,11 +96,9 @@ function switchMode(mode) {
     if (currentSource === mode) return;
 
     if (isRunning) {
-        // 실시간 분석 중이면 일시 정지
         toggleAnalysis(); 
     }
     
-    // 이전 이미지/캔버스 정리
     const webcamContainer = document.getElementById("webcam-container");
     webcamContainer.innerHTML = '';
     
@@ -117,9 +115,7 @@ function switchMode(mode) {
         webcamControls.style.display = 'block';
         uploadControls.style.display = 'none';
         webcamContainer.innerHTML = '<p id="initial-message">Click "Start Analysis" to load webcam.</p>';
-        labelContainer.innerHTML = 'Waiting for analysis...';
         
-        // 이전에 웹캠이 초기화되었으면 다시 캔버스를 컨테이너에 추가
         if(webcam && webcam.canvas) {
             webcamContainer.appendChild(webcam.canvas);
         }
@@ -129,13 +125,15 @@ function switchMode(mode) {
         webcamControls.style.display = 'none';
         uploadControls.style.display = 'block';
         webcamContainer.innerHTML = '<p id="initial-message">Please upload an image.</p>';
-        labelContainer.innerHTML = 'Upload an image and click "Process Image".';
         
-        // 웹캠이 실행 중이었다면 일시 중지
         if(webcam) {
             webcam.pause();
         }
     }
+    
+    labelContainer.innerHTML = (mode === 'webcam' && isRunning) ? 'Running analysis...' : 'Waiting for analysis...';
+    // 모드 전환 시 추천 섹션 UI 초기화
+    document.getElementById("recommendation-output").innerHTML = '<p>Select a Face Type button from the **Hair Style Guide** to see recommendations.</p>';
 }
 
 
@@ -147,7 +145,6 @@ async function toggleAnalysis() {
     const startButton = document.getElementById("start-button");
     
     if (isRunning) {
-        // 일시 정지
         window.cancelAnimationFrame(requestID);
         startButton.innerText = "▶️ Resume Analysis";
         startButton.classList.replace('primary-btn', 'secondary-btn');
@@ -161,21 +158,18 @@ async function toggleAnalysis() {
         document.getElementById("webcam-container").innerHTML = "Loading models and setting up webcam. Please wait...";
         
         try {
-            // 모델 로드
             model1 = await tmImage.load(URL_MODEL_1 + "model.json", URL_MODEL_1 + "metadata.json");
             model2 = await tmImage.load(URL_MODEL_2 + "model.json", URL_MODEL_2 + "metadata.json");
             
-            // 웹캠 설정
             const flip = true; 
             webcam = new tmImage.Webcam(400, 300, flip); 
             await webcam.setup(); 
             await webcam.play();
             
-            // UI 업데이트
             document.getElementById("webcam-container").innerHTML = ''; 
             document.getElementById("webcam-container").appendChild(webcam.canvas);
             
-            currentModel = 1; // 기본 모델 1로 설정
+            currentModel = 1; 
             updateModelInfo();
             isInitialized = true;
 
@@ -189,11 +183,11 @@ async function toggleAnalysis() {
         startButton.disabled = false;
     }
 
-    if(webcam) webcam.play(); // 웹캠 재생
+    if(webcam) webcam.play(); 
     startButton.innerText = "⏸️ Pause & Lock Result";
     startButton.classList.replace('secondary-btn', 'primary-btn');
     isRunning = true;
-    loop(); // 예측 루프 시작
+    loop(); 
 }
 
 
@@ -226,19 +220,24 @@ function handleModelChange(newModel) {
     const styleControls = document.getElementById("style-selection-controls");
     const recommendationOutput = document.getElementById("recommendation-output");
     
-    if (newModel === 1) { // 얼굴형 분석 모델
+    // 얼굴형 분석 모델(Model 1)일 때만 추천 버튼 표시
+    if (newModel === 1) { 
         styleControls.style.display = 'block';
         recommendationOutput.innerHTML = '<p>Select a Face Type button from the **Hair Style Guide** to see recommendations.</p>';
-    } else { // 퍼스널 톤 분석 모델
+    } else { // 퍼스널 톤 분석 모델(Model 2)일 때 숨김
         styleControls.style.display = 'none';
         recommendationOutput.innerHTML = '<p>The Hair Style Guide is available only for Face Type Analysis (Model 1).</p>';
     }
     
     // 일시 정지 상태일 때 즉시 예측 실행 (화면 갱신)
-    if (currentSource === 'webcam' && !isRunning && isInitialized) {
+    if ((currentSource === 'webcam' && !isRunning && isInitialized) || currentSource === 'image') {
         const modelToUse = (currentModel === 1) ? model1 : model2;
         const modelName = (currentModel === 1) ? "Face Type Analysis" : "Personal Tone Analysis";
-        predict(modelToUse, modelName, webcam.canvas);
+        const element = (currentSource === 'webcam') ? webcam.canvas : document.getElementById('uploaded-image');
+        
+        if(element) {
+            predict(modelToUse, modelName, element);
+        }
     } 
 }
 
@@ -315,7 +314,7 @@ async function predict(modelToUse, modelName, element) {
     }
     labelContainer.innerHTML = resultHTML;
     
-    // 예측이 완료되면 얼굴형 버튼이 보이도록 보장 (handleModelChange에서 처리되지만 한 번 더 확인)
+    // 예측이 완료되면 얼굴형 버튼이 보이도록 보장 
     if (currentModel === 1) {
         document.getElementById("style-selection-controls").style.display = 'block';
     }
@@ -323,7 +322,7 @@ async function predict(modelToUse, modelName, element) {
 
 
 // ===============================================
-// 8. Manual Recommendation Output (사용자 요청 사항)
+// 8. Manual Recommendation Output (헤어스타일 추천 출력)
 // ===============================================
 
 function showRecommendation(faceType) {
@@ -340,7 +339,7 @@ function showRecommendation(faceType) {
     document.querySelector(`.face-select-btn[data-facetype="${faceType}"]`).classList.add('active');
 
 
-    // 추천 스타일 텍스트 및 이미지 출력
+    // 추천 스타일 텍스트 및 이미지 출력 (가로 배치 CSS 사용)
     const recommendationHTML = `
         <div class="recommendation-content">
             <h4>✨ Hairstyle Guide for ${faceType} Face Shape</h4>
