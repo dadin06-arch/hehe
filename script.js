@@ -76,6 +76,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // 💡 얼굴형 선택 버튼 이벤트 리스너 추가 (추천 기능)
     document.querySelectorAll('.face-select-btn').forEach(button => {
         button.addEventListener('click', (e) => {
+            // 모든 버튼에서 active 클래스 제거
+            document.querySelectorAll('.face-select-btn').forEach(btn => btn.classList.remove('active'));
+            // 클릭된 버튼에 active 클래스 추가
+            e.target.classList.add('active');
+
             const faceType = e.target.getAttribute('data-facetype');
             showRecommendation(faceType);
         });
@@ -83,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     switchMode('webcam');
     
-    // 초기에는 추천 섹션을 숨김
+    // 초기에는 추천 섹션을 숨김 (handleModelChange에서 Model 1 선택 시 보이게 됨)
     document.getElementById("style-selection-controls").style.display = 'none';
 });
 
@@ -132,7 +137,6 @@ function switchMode(mode) {
     }
     
     labelContainer.innerHTML = (mode === 'webcam' && isRunning) ? 'Running analysis...' : 'Waiting for analysis...';
-    // 모드 전환 시 추천 섹션 UI 초기화
     document.getElementById("recommendation-output").innerHTML = '<p>Select a Face Type button from the **Hair Style Guide** to see recommendations.</p>';
 }
 
@@ -224,6 +228,10 @@ function handleModelChange(newModel) {
     if (newModel === 1) { 
         styleControls.style.display = 'block';
         recommendationOutput.innerHTML = '<p>Select a Face Type button from the **Hair Style Guide** to see recommendations.</p>';
+        
+        // 버튼 선택 초기화
+        document.querySelectorAll('.face-select-btn').forEach(btn => btn.classList.remove('active'));
+        
     } else { // 퍼스널 톤 분석 모델(Model 2)일 때 숨김
         styleControls.style.display = 'none';
         recommendationOutput.innerHTML = '<p>The Hair Style Guide is available only for Face Type Analysis (Model 1).</p>';
@@ -305,7 +313,7 @@ async function predict(modelToUse, modelName, element) {
     const currentMaxPredictions = modelToUse.getTotalClasses(); 
     const prediction = await modelToUse.predict(element);
 
-    let resultHTML = `<div class="model-name-title"><h3>${modelName} Prediction:</h3></div>`;
+    let resultHTML = `<div class="model-name-title"><h3>${modelName} Results:</h3></div>`;
     
     for (let i = 0; i < currentMaxPredictions; i++) {
         const classPrediction = 
@@ -333,11 +341,6 @@ function showRecommendation(faceType) {
         outputContainer.innerHTML = `<p style="color:red;">Error: No recommendation data found for ${faceType}.</p>`;
         return;
     }
-
-    // 버튼 스타일 업데이트 (클릭된 버튼 강조)
-    document.querySelectorAll('.face-select-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelector(`.face-select-btn[data-facetype="${faceType}"]`).classList.add('active');
-
 
     // 추천 스타일 텍스트 및 이미지 출력 (가로 배치 CSS 사용)
     const recommendationHTML = `
