@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>AI StyleMate: Hair Style and Color Recommendation</title>
     
-    <link rel="icon" href="favicon.ico" type="image/x-icon"> 
+    <link rel="stylesheet" href="style.css"> 
     
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="style.css"> 
     
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
@@ -64,11 +62,34 @@
                 <button id="model1-btn" class="btn model-select-btn">Face Type Analysis</button>
                 <button id="model2-btn" class="btn model-select-btn">Personal Tone Analysis</button>
             </div>
+            
+            <div id="style-selection-controls" style="margin-top: 30px; display: none;">
+                <h3><i class="fas fa-scissors"></i> Hair Style Guide</h3>
+                <p>Select a face type to view recommendations.</p>
+                <div class="face-type-buttons button-group">
+                    <button class="btn face-select-btn" data-facetype="Oval">Oval</button>
+                    <button class="btn face-select-btn" data-facetype="Round">Round</button>
+                    <button class="btn face-select-btn" data-facetype="Square">Square</button>
+                    <button class="btn face-select-btn" data-facetype="Heart">Heart</button>
+                    <button class="btn face-select-btn" data-facetype="Oblong">Oblong</button>
+                </div>
+            </div>
+            
         </section>
 
         <section id="results" class="card fade-in">
-            <h2><i class="fas fa-chart-bar"></i> Live Recommendations</h2>
-            <div id="label-container">Waiting for analysis...</div>
+            <h2><i class="fas fa-chart-bar"></i> Analysis & Recommendation</h2>
+            
+            <div id="prediction-output">
+                <div id="label-container">Waiting for analysis...</div>
+            </div>
+            
+            <hr style="margin: 20px 0; border-top: 1px solid #eee;">
+            
+            <div id="recommendation-output">
+                <p>Select a Face Type button from the **Hair Style Guide** to see recommendations.</p>
+            </div>
+            
         </section>
     </div>
 
@@ -76,4 +97,3 @@
 </body>
 
 </html>
-
