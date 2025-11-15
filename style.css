@@ -1,4 +1,4 @@
-/* style.css - 최종 통합 버전 */
+/* style.css - 최종 통합 버전 (추천 레이아웃 수정) */
 
 /* 변수 설정 */
 :root {
@@ -305,6 +305,11 @@ h2 .fas {
     border: 1px solid #e0e0e0;
     border-radius: 6px;
     background-color: white;
+    
+    /* 🌟 핵심 수정: 텍스트(h5)와 이미지(img)를 가로로 배치 */
+    display: flex; 
+    gap: 15px; /* 텍스트와 이미지 사이 간격 */
+    align-items: flex-start; /* 상단 정렬 */
 }
 
 .style-column h5 {
@@ -312,14 +317,17 @@ h2 .fas {
     margin-top: 0;
     margin-bottom: 10px;
     font-size: 1.1em;
+    flex-basis: 50%; /* 텍스트 영역 50% 할당 */
 }
 
 .style-column img {
-    width: 100%; 
-    max-height: 250px;
+    /* 🌟 핵심 수정: 이미지 크기를 텍스트와 나란히 배치되도록 조정 */
+    flex-basis: 50%; /* 이미지 영역 50% 할당 */
+    max-width: 50%; 
+    height: auto; /* 높이 자동 조절 */
     object-fit: cover; 
     border-radius: 4px;
-    margin-top: 10px;
+    margin-top: 0; /* h5와 나란히 배치되므로 상단 마진 제거 */
     border: 1px solid #ddd;
 }
 
@@ -334,7 +342,16 @@ h2 .fas {
         padding: 25px;
     }
     .hair-styles-container {
-        flex-direction: column;
+        flex-direction: column; /* 중간 화면 크기에서는 다시 세로로 배치 */
+    }
+    .style-column {
+        flex-direction: column; /* 중간 화면 크기에서는 다시 세로로 배치 */
+        align-items: center;
+    }
+    .style-column h5, .style-column img {
+        flex-basis: 100%; /* 100% 할당 */
+        max-width: 100%;
+        text-align: center;
     }
     .face-type-buttons {
         gap: 5px;
