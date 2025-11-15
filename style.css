@@ -1,4 +1,4 @@
-/* style.css - 최종 통합 버전 (추천 레이아웃 수정) */
+/* style.css - 최종 통합 버전 (추천 레이아웃 강력 수정) */
 
 /* 변수 설정 */
 :root {
@@ -62,6 +62,15 @@ header {
     gap: 20px;
 }
 
+.header-text-group {
+    flex-grow: 1; 
+}
+
+.header-icons-left, .header-icons-right {
+    display: flex;
+    gap: 15px; 
+}
+
 .header-icon {
     width: 80px; 
     height: 80px;
@@ -69,6 +78,12 @@ header {
     opacity: 1.0; 
     transition: transform 0.2s;
 }
+
+.header-icon:hover {
+    transform: scale(1.1);
+    filter: none;
+}
+
 
 h1 {
     font-family: var(--font-montserrat);
@@ -128,6 +143,10 @@ h2 .fas {
     flex: 1 1 350px; 
     min-width: 320px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
 }
 
 /* 버튼 스타일 */
@@ -195,6 +214,7 @@ h2 .fas {
     border: 1px solid #ddd;
     border-radius: 10px;
     background-color: var(--bg-light);
+    margin-top: 30px; /* 추가 */
 }
 #style-selection-controls h3 {
     margin-bottom: 10px;
@@ -268,6 +288,7 @@ h2 .fas {
     padding: 15px;
     border: 1px dashed #ccc;
     border-radius: 10px;
+    margin-top: 20px; /* 추가 */
 }
 
 .recommendation-content {
@@ -298,6 +319,7 @@ h2 .fas {
     margin-top: 15px;
 }
 
+/* 🌟 추천 칼럼 (텍스트+이미지 컨테이너) */
 .style-column {
     flex: 1 1 calc(50% - 10px);
     min-width: 250px;
@@ -308,27 +330,31 @@ h2 .fas {
     
     /* 🌟 핵심 수정: 텍스트(h5)와 이미지(img)를 가로로 배치 */
     display: flex; 
-    gap: 15px; /* 텍스트와 이미지 사이 간격 */
+    flex-direction: row; /* 가로 배치 */
+    gap: 15px; 
     align-items: flex-start; /* 상단 정렬 */
 }
 
+/* 🌟 텍스트 영역 */
 .style-column h5 {
     color: #4CAF50; 
     margin-top: 0;
     margin-bottom: 10px;
     font-size: 1.1em;
-    flex-basis: 50%; /* 텍스트 영역 50% 할당 */
+    flex: 1; /* 남은 공간을 모두 차지 */
+    line-height: 1.5;
 }
 
+/* 🌟 이미지 영역 (크기 축소 및 고정) */
 .style-column img {
-    /* 🌟 핵심 수정: 이미지 크기를 텍스트와 나란히 배치되도록 조정 */
-    flex-basis: 50%; /* 이미지 영역 50% 할당 */
-    max-width: 50%; 
-    height: auto; /* 높이 자동 조절 */
-    object-fit: cover; 
+    /* 🌟 핵심 수정: 이미지 크기 고정 및 비율 유지 */
+    width: 150px; /* 고정 너비 */
+    height: 150px; /* 고정 높이 */
+    object-fit: cover; /* 이미지가 잘리더라도 영역을 꽉 채움 */
     border-radius: 4px;
     margin-top: 0; 
     border: 1px solid #ddd;
+    flex-shrink: 0; /* 이미지 크기가 줄어들지 않도록 */
 }
 
 
@@ -344,14 +370,16 @@ h2 .fas {
     .hair-styles-container {
         flex-direction: column;
     }
-    /* 작은 화면에서는 추천 텍스트/이미지를 다시 세로로 배치 */
+    /* 🌟 작은 화면에서는 추천 텍스트/이미지를 다시 세로로 배치 */
     .style-column {
         flex-direction: column; 
         align-items: center;
     }
     .style-column h5, .style-column img {
-        flex-basis: 100%; 
-        max-width: 100%;
+        flex: auto; /* 세로 배치 시 유연하게 */
+        width: 100%;
+        max-width: 300px; /* 세로 배치 시 최대 너비 지정 */
+        height: auto; /* 세로 배치 시 높이 자동 */
         text-align: center;
     }
     .face-type-buttons {
