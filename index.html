@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI StyleMate - Face & Tone Analysis</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+</head>
+<body>
+
+    <header>
+        <div class="header-content-wrapper">
+            <div class="header-icons-left">
+                <img src="images/icon_face_type.png" class="header-icon" alt="Face Type Icon">
+                <img src="images/icon_palette.png" class="header-icon" alt="Palette Icon">
+            </div>
+            
+            <div class="header-text-group">
+                <h1>AI StyleMate</h1>
+                <p class="subtitle">Face & Tone Analysis</p>
+            </div>
+            
+            <div class="header-icons-right">
+                <img src="images/icon_comb.png" class="header-icon" alt="Comb Icon">
+                <img src="images/icon_face_scan.png" class="header-icon" alt="Face Scan Icon">
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <div class="card">
+            <h2><i class="fas fa-camera"></i> Input Source</h2>
+            
+            <div class="mode-select-group">
+                <button class="mode-btn active" id="mode-webcam">Webcam Mode</button>
+                <button class="mode-btn" id="mode-upload">Image Upload Mode</button>
+            </div>
+
+            <div id="webcam-container">
+                 <p id="initial-message">Select a mode to begin.</p>
+            </div>
+
+            <div id="webcam-controls" style="display: block;">
+                <button type="button" class="btn primary-btn" id="start-button">🚀 Start Analysis</button>
+            </div>
+            
+            <div id="upload-controls" style="display: none;">
+                <input type="file" id="image-upload" accept="image/*" class="file-input">
+                <button type="button" class="btn secondary-btn" id="process-image-btn" disabled>Analyze Uploaded Image</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-magic"></i> Model Selection</h2>
+            
+            <p id="current-model-info">Active Model: **Not yet loaded**</p>
+
+            <button type="button" class="btn model-select-btn" id="model1-btn" disabled>Face Type Analysis</button>
+            <button type="button" class="btn model-select-btn" id="model2-btn" disabled>Personal Tone Analysis</button>
+            
+            <p style="margin-top: 30px;">
+                <small>First, select an **Input Source** (Webcam or Upload) to activate the models.</small>
+            </p>
+        </div>
+        
+        <div class="card" id="style-selection-card">
+            <h2><i class="fas fa-scissors"></i> Style Selection</h2>
+            <p style="margin-bottom: 20px;">Select a face type below to see recommended hairstyles.</p>
+            
+            <div class="face-type-buttons">
+                <button class="btn face-select-btn" data-facetype="Oval">Oval</button>
+                <button class="btn face-select-btn" data-facetype="Round">Round</button>
+                <button class="btn face-select-btn" data-facetype="Square">Square</button>
+                <button class="btn face-select-btn" data-facetype="Heart">Heart</button>
+                <button class="btn face-select-btn" data-facetype="Oblong">Oblong</button>
+            </div>
+        </div>
+
+
+        <div class="card wide-card">
+            <h2><i class="fas fa-chart-bar"></i> Prediction & Recommendation</h2>
+            
+            <div id="analysis-results">
+                <h3>📊 Prediction Results (Model Output)</h3>
+                <div id="prediction-output">
+                     <div class="recommendation-box">
+                        <p>Run the analysis first to see the model's prediction.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="style-recommendation">
+                <h3>✂️ Style Recommendation (User Selection)</h3>
+                <div id="recommendation-output">
+                    <div class="recommendation-box">
+                        <p>Select a face type button above to view a recommendation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
