@@ -327,7 +327,7 @@ h2 .fas {
     height: auto; /* 높이 자동 조절 */
     object-fit: cover; 
     border-radius: 4px;
-    margin-top: 0; /* h5와 나란히 배치되므로 상단 마진 제거 */
+    margin-top: 0; 
     border: 1px solid #ddd;
 }
 
@@ -342,14 +342,15 @@ h2 .fas {
         padding: 25px;
     }
     .hair-styles-container {
-        flex-direction: column; /* 중간 화면 크기에서는 다시 세로로 배치 */
+        flex-direction: column;
     }
+    /* 작은 화면에서는 추천 텍스트/이미지를 다시 세로로 배치 */
     .style-column {
-        flex-direction: column; /* 중간 화면 크기에서는 다시 세로로 배치 */
+        flex-direction: column; 
         align-items: center;
     }
     .style-column h5, .style-column img {
-        flex-basis: 100%; /* 100% 할당 */
+        flex-basis: 100%; 
         max-width: 100%;
         text-align: center;
     }
