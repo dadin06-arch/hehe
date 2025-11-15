@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI StyleMate - Face & Tone Analysis</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> 
+</head>
+<body>
+
+    <header>
+        <div class="header-content-wrapper">
+            <div class="header-icons-left">
+                <img src="images/icon_face_type.png" class="header-icon" alt="Face Type Icon">
+                <img src="images/icon_palette.png" class="header-icon" alt="Palette Icon">
+            </div>
+            
+            <div class="header-text-group">
+                <h1>AI StyleMate</h1>
+                <p class="subtitle">Hair Style & Color Recommendation</p>
+            </div>
+            
+            <div class="header-icons-right">
+                <img src="images/icon_comb.png" class="header-icon" alt="Comb Icon">
+                <img src="images/icon_face_scan.png" class="header-icon" alt="Face Scan Icon">
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <div class="card">
+            <h2><i class="fas fa-camera"></i> Input Source</h2>
+            
+            <div class="mode-select-group">
+                <button class="mode-btn active" id="mode-webcam">Webcam Mode</button>
+                <button class="mode-btn" id="mode-upload">Image Upload Mode</button>
+            </div>
+
+            <div id="webcam-container">
+                 <p id="initial-message">Select a mode to begin.</p>
+            </div>
+
+            <div id="webcam-controls" style="display: block;">
+                <button type="button" class="btn primary-btn" id="start-button">🚀 Start Analysis</button>
+            </div>
+            
+            <div id="upload-controls" style="display: none;">
+                <input type="file" id="image-upload" accept="image/*" class="file-input">
+                <button type="button" class="btn secondary-btn" id="process-image-btn" disabled>Analyze Uploaded Image</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-magic"></i> Model Selection</h2>
+            
+            <p id="current-model-info">Active Model: **Not yet loaded**</p>
+
+            <button type="button" class="btn model-select-btn" id="model1-btn">Face Type Analysis</button>
+            <button type="button" class="btn model-select-btn" id="model2-btn">Personal Tone Analysis</button>
+            
+            <p style="margin-top: 30px;">
+                <small>Select a model (Face Type or Personal Tone) before starting the analysis.</small>
+            </p>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-chart-bar"></i> Live Recommendations</h2>
+            <div id="label-container">
+                <div class="recommendation-box">
+                    <h3>Waiting for analysis...</h3>
+                    <p>Select a model and run the analysis to view results and style recommendations here.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
