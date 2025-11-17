@@ -1,4 +1,4 @@
-// script.js - AI StyleMate Logic (Final Version with Face Detection & Confidence Check)
+// script.js - AI StyleMate Logic (Final Version with Face Detection & Confidence Check & Button Fix)
 
 // ----------------------------------------------------
 // 1. MODEL PATHS, VARIABLES & DATA DEFINITION
@@ -12,14 +12,14 @@ let labelContainer = document.getElementById("label-container");
 let currentModel = 0; 
 let requestID; 
 let isRunning = false; 
-let isInitialized = false; 
+let isInitialized = false; // 💡 초기화 상태 플래그 (버튼 작동 오류 방지 핵심)
 let currentSource = 'webcam'; 
 
 // 💡 얼굴 감지 임계값 (필요 시 조정 가능)
 const FACE_DETECTION_THRESHOLD = 0.9; // 얼굴 감지 신뢰도
 const MIN_FACE_SIZE = 50; // 최소 얼굴 크기 (픽셀)
 
-// 💡 새로운 상수 추가: 최소 예측 확률 임계값 (60%)
+// 💡 [요청 기능] 최소 예측 확률 임계값 (60%)
 const MIN_CONFIDENCE_THRESHOLD = 0.60; 
 
 // 💡 얼굴형별 추천 데이터 및 이미지 URL 정의
@@ -61,7 +61,7 @@ const faceTypeData = {
     }
 };
 
-// 💡 퍼스널 톤 추천 데이터 및 이미지 URL 정의 (파일명 최종 수정됨)
+// 💡 퍼스널 톤 추천 데이터 및 이미지 URL 정의
 const personalToneData = {
     "Cool": {
         summary: "Blue-based and purple-based cool hues make the skin look clearer and brighter.",
@@ -85,6 +85,7 @@ const personalToneData = {
 // ===============================================
 
 document.addEventListener("DOMContentLoaded", () => {
+    // 💡 모든 버튼에 이벤트 리스너 할당
     document.getElementById("start-button").addEventListener("click", toggleAnalysis);
     
     document.getElementById("model1-btn").addEventListener("click", () => handleModelChange(1));
@@ -116,13 +117,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
     
+    // 초기 모드 및 UI 설정
     switchMode('webcam');
     
     document.getElementById("style-selection-controls").style.display = 'none';
     document.getElementById("tone-selection-controls").style.display = 'none';
     
-    // 💡 초기 모델 설정을 1번으로 지정하여 버튼 클래스를 업데이트
-    currentModel = 1;
+    currentModel = 1; 
     updateModelInfo();
 });
 
@@ -134,6 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function switchMode(mode) {
     if (currentSource === mode) return;
 
+    // 모드 전환 시 웹캠 분석 일시 정지
     if (isRunning) {
         toggleAnalysis(); 
     }
@@ -154,8 +156,8 @@ function switchMode(mode) {
         webcamControls.style.display = 'block';
         uploadControls.style.display = 'none';
         
-        // 💡 webcam.canvas가 이미 생성되어 있다면 재사용
         if (isInitialized && webcam && webcam.canvas) {
+            // 이미 초기화된 웹캠 재사용
             webcamContainer.appendChild(webcam.canvas);
         } else {
              webcamContainer.innerHTML = '<p id="initial-message">Click "Start Analysis" to load webcam.</p>';
@@ -167,6 +169,7 @@ function switchMode(mode) {
         uploadControls.style.display = 'block';
         webcamContainer.innerHTML = '<p id="initial-message">Please upload an image.</p>';
         
+        // 이미지 모드 진입 시 웹캠 일시 정지
         if(webcam) {
             webcam.pause();
         }
@@ -207,14 +210,13 @@ async function toggleAnalysis() {
             const flip = true; 
             webcam = new tmImage.Webcam(400, 300, flip); 
             await webcam.setup(); 
-            // 웹캠은 setup만 하고, play는 아래에서 실행
             
             document.getElementById("webcam-container").innerHTML = ''; 
             document.getElementById("webcam-container").appendChild(webcam.canvas);
             
-            currentModel = 1; // 초기 모델 설정
+            currentModel = 1; 
             updateModelInfo();
-            isInitialized = true;
+            isInitialized = true; // 💡 초기화 성공 플래그 설정
 
         } catch (error) {
             console.error("Initialization error:", error);
@@ -226,7 +228,7 @@ async function toggleAnalysis() {
         startButton.disabled = false;
     }
 
-    if(webcam) webcam.play(); 
+    if(webcam) webcam.play(); // 웹캠 객체 확인 후 재생
     startButton.innerText = "⏸️ Pause & Lock Result";
     startButton.classList.replace('secondary-btn', 'primary-btn');
     isRunning = true;
@@ -239,8 +241,8 @@ async function toggleAnalysis() {
 // ===============================================
 
 function loop() {
-    if (currentSource === 'webcam') {
-        // 💡 webcam이 로드된 상태에서만 update 시도
+    if (currentSource === 'webcam' && isRunning) {
+        // 💡 isRunning과 webcam 로드 상태 확인
         if (webcam && webcam.canvas) {
             webcam.update(); 
             
@@ -255,7 +257,7 @@ function loop() {
     requestID = window.requestAnimationFrame(loop); 
 }
 
-
+// 💡 모델 변경 핸들러 (버튼 작동 문제 해결 핵심 로직)
 function handleModelChange(newModel) {
     if (currentModel === newModel) return;
 
@@ -266,22 +268,22 @@ function handleModelChange(newModel) {
     const toneControls = document.getElementById("tone-selection-controls"); 
     const recommendationOutput = document.getElementById("recommendation-output");
     
+    // 추천 버튼 UI 전환 및 초기화
     if (newModel === 1) { 
         styleControls.style.display = 'block';
         toneControls.style.display = 'none';
         recommendationOutput.innerHTML = '<p>Select a Face Type button from the **Hair Style Guide** to see recommendations.</p>';
-        document.querySelectorAll('.tone-select-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tone-select-btn').forEach(btn => btn.classList.remove('active')); // 다른 모델 버튼 활성화 해제
         
     } else { 
         styleControls.style.display = 'none'; 
         toneControls.style.display = 'block'; 
         recommendationOutput.innerHTML = '<p>Select a Personal Tone button from the **Personal Tone Guide** to see recommendations.</p>';
-        document.querySelectorAll('.face-select-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.face-select-btn').forEach(btn => btn.classList.remove('active')); // 다른 모델 버튼 활성화 해제
     }
     
-    // 💡 중요: isInitialized와 현재 소스를 확인하여 분석을 시도
+    // 💡 중요: 초기화 상태 확인 로직 (버튼 클릭 오류 방지)
     if (!isInitialized) {
-        // 모델이 초기화되지 않았다면 분석 시도를 막고 사용자에게 시작 버튼을 누르도록 유도
         labelContainer.innerHTML = 'Please click "Start Analysis" first or upload an image.';
         return;
     }
@@ -298,6 +300,7 @@ function handleModelChange(newModel) {
             element = document.getElementById('uploaded-image');
         }
         
+        // 유효한 입력 요소가 있을 때만 예측 실행
         if(element) {
             predict(modelToUse, modelName, element);
         } else if (currentSource === 'image') {
@@ -335,12 +338,13 @@ async function processUploadedImage() {
     const imgElement = document.getElementById('uploaded-image');
     if (!imgElement) return;
     
+    // 이미지 분석 시 모델이 초기화되지 않았다면 로드 시도
     if (!isInitialized) {
         labelContainer.innerHTML = 'Loading models... Please wait.';
         try {
             model1 = await tmImage.load(URL_MODEL_1 + "model.json", URL_MODEL_1 + "metadata.json");
             model2 = await tmImage.load(URL_MODEL_2 + "model.json", URL_MODEL_2 + "metadata.json");
-            faceDetectorModel = await blazeface.load(); // 💡 얼굴 감지 모델 로드
+            faceDetectorModel = await blazeface.load(); 
             isInitialized = true;
         } catch(e) {
             labelContainer.innerHTML = 'Error loading models. Check console.';
@@ -363,7 +367,7 @@ async function processUploadedImage() {
 
 
 // ===============================================
-// 7. Core Prediction and UI Update (핵심 수정 부분)
+// 7. Core Prediction and UI Update (60% 경고 기능 포함)
 // ===============================================
 
 async function predict(modelToUse, modelName, element) {
@@ -372,9 +376,7 @@ async function predict(modelToUse, modelName, element) {
         return;
     }
     
-    // ----------------------------------------------------------------
-    // 💡 1. 얼굴 감지(Face Detection) 로직: 얼굴의 명확성 확인
-    // ----------------------------------------------------------------
+    // 1. 얼굴 감지(Face Detection) 로직: 얼굴의 명확성 확인
     const predictions = await faceDetectorModel.estimateFaces(element, FACE_DETECTION_THRESHOLD);
 
     if (predictions.length === 0) {
@@ -386,7 +388,7 @@ async function predict(modelToUse, modelName, element) {
         return; 
     }
     
-    // 선택적: 얼굴 크기 검사 (너무 멀리 있거나 작게 찍힌 경우)
+    // 선택적: 얼굴 크기 검사
     const largestFace = predictions[0]; 
     const faceWidth = largestFace.bottomRight[0] - largestFace.topLeft[0];
     const faceHeight = largestFace.bottomRight[1] - largestFace.topLeft[1];
@@ -400,14 +402,11 @@ async function predict(modelToUse, modelName, element) {
         return;
     }
     
-    // ----------------------------------------------------------------
-    // 💡 2. 분류(Classification) 로직: 얼굴이 명확할 때만 실행
-    // ----------------------------------------------------------------
-    
+    // 2. 분류(Classification) 로직
     const currentMaxPredictions = modelToUse.getTotalClasses(); 
     const prediction = await modelToUse.predict(element);
 
-    // 💡 3. 최고 확률 검사 및 경고 메시지 추가 로직
+    // 💡 3. [요청 기능] 최고 확률 검사 및 경고 메시지 추가 로직
     const maxProbability = prediction.reduce((max, p) => Math.max(max, p.probability), 0);
     
     let resultHTML = `<div class="model-name-title"><h3>${modelName} Results:</h3></div>`;
